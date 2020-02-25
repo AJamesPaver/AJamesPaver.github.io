@@ -3,32 +3,116 @@
 <head>
     <title>Dashboard</title>
     <style>
-        body {font-family: Arial, Helvetica, sans-serif; margin:0; background-color: black;color: white;}
-        .fullwidth {width:100%}
-        .time {float: left; color: white; text-align:center;padding: 13px 25px; text-decoration: none; font-size: 20px; }
-        .time small {font-size: 10px; color:lightgrey}
+        body {font-family: Arial, Helvetica, sans-serif; background-color: black;color: white; margin: 50px;}
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        .rowbreak:after {
+            content: "";
+            display: table;
+            clear: both;
+            margin-bottom: 50px;
+        }
+        .column {float: left; }
+        .column.side {width:33%}
+        .date {color:lightgrey; font-size: 35px;float:left;}
+        .large {color: white; text-align:center; text-decoration: none; font-size: 60px; float:left; }
+        .small {float: left; font-size: 30px; color:lightgrey}
     </style>
     <script>
+        function startup(){
+            // Handler for the timer functions
+            startTime();
+            updateWeather();
+            updateForecast();
+        }
         function startTime() {
-          var today = new Date();
-          var h = today.getHours();
-          var m = today.getMinutes();
-          var s = today.getSeconds();
-          m = checkTime(m);
-          s = checkTime(s);
-          document.getElementById('timemain').innerHTML = h + ":" + m;
-          document.getElementById('timeseconds').innerHTML = s;
-          var t = setTimeout(startTime, 500);
+            var days    = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            var months  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            document.getElementById('timemain').innerHTML = h + ":" + m;
+            document.getElementById('timeseconds').innerHTML = s;
+            document.getElementById('date').innerHTML = days[ today.getDay() ].concat(', ', today.getDate(), ' ', months[ today.getMonth() ], ', ', today.getYear()+1900 );
+            var t1 = setTimeout(startTime, 500); // run this again in 0.5s
         }
         function checkTime(i) {
           if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
           return i;
         }
+        function updateWeather() {
+            // Update the weather
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // response has been made - interpret the JSON:
+                    var jsonObj = JSON.parse(this.responseText);
+                    document.getElementById('weather').innerHTML = jsonObj["weather"][0]["description"]
+                    var temp = Math.round(jsonObj['main']["temp"] - 273.15)
+                    document.getElementById('temperature').innerHTML = temp.toString().concat('\xB0')
+                    temp = Math.round(jsonObj['main']["feels_like"] - 273.15)
+                    var prefix = 'Feels like '
+                    document.getElementById('realfeel').innerHTML = prefix.concat(temp.toString(),'\xB0')
+                }
+            };
+            xhttp.open("GET", "http://api.openweathermap.org/data/2.5/weather?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
+            xhttp.send();
+            var t2 = setTimeout(updateWeather, 1000*10*60); // run this again in 10min
+        }
+        function updateForecast() {
+            // Update the weather
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // response has been made - interpret the JSON:
+                    var jsonObj = JSON.parse(this.responseText);
+                    document.getElementById('weather').innerHTML = jsonObj["weather"][0]["description"]
+                    var temp = Math.round(jsonObj['main']["temp"] - 273.15)
+                    document.getElementById('temperature').innerHTML = temp.toString().concat('\xB0')
+                    temp = Math.round(jsonObj['main']["feels_like"] - 273.15)
+                    var prefix = 'Feels like '
+                    document.getElementById('realfeel').innerHTML = prefix.concat(temp.toString(),'\xB0')
+                }
+            };
+            xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
+            xhttp.send();
+            var t3 = setTimeout(updateForecast, 1000*10*60); // run this again in 10min
+        }
     </script>
 </head>
-<body onload="startTime()">
-    <div id="timemain" class="time"></div>
-    <div id="timeseconds" class="time small"></div>
-    <p>I'm hosted with GitHub Pages.</p>
+<body onload="startup()">
+    <div class="row">
+        <div class="column1">
+            <div id="date" class="date"></div>
+        </div>
+    </div>
+    <div class="rowbreak">
+        <div class="column1">
+            <div id="timemain" class="large"></div>
+            <div id="timeseconds" class="small"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column1">
+            <div id="temperature" class="large"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column1">
+            <div id="realfeel" class="small"></div>
+        </div>
+    </div>
+    <div class="rowbreak">
+        <div class="column1">
+            <div id="weather" class="small"></div>
+        </div>
+    </div>
 </body>
 </html>
