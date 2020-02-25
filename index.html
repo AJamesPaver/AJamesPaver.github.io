@@ -5,10 +5,30 @@
     <style>
         body {font-family: Arial, Helvetica, sans-serif; margin:0; background-color: black;color: white;}
         .fullwidth {width:100%}
+        .time {float: left; color: #f2f2f2; text-align:center;padding: 13px 25px; text-decoration: none; font-size: 20px; }
+        .time small {font-size: 10px; color:lightgrey}
     </style>
+    <script>
+        function startTime() {
+          var today = new Date();
+          var h = today.getHours();
+          var m = today.getMinutes();
+          var s = today.getSeconds();
+          m = checkTime(m);
+          s = checkTime(s);
+          document.getElementById('timemain').innerHTML = h + ":" + m;
+          document.getElementById('timeseconds').innerHTML = s;
+          var t = setTimeout(startTime, 500);
+        }
+        function checkTime(i) {
+          if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+          return i;
+        }
+    </script>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <div id="timemain" class="time"></div>
+    <div id="timeseconds" class="time small"></div>
     <p>I'm hosted with GitHub Pages.</p>
 </body>
 </html>
