@@ -60,6 +60,8 @@
                     temp = Math.round(jsonObj['main']["feels_like"] - 273.15)
                     var prefix = 'Feels like '
                     document.getElementById('realfeel').innerHTML = prefix.concat(temp.toString(),'\xB0')
+                    //Update the weather icon:
+                    document.getElementById("weathericon").src = "http://openweathermap.org/img/wn/".concat(jsonObj["weather"][0]["icon"], '@2x.png')
                 }
             };
             xhttp.open("GET", "http://api.openweathermap.org/data/2.5/weather?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
@@ -73,12 +75,6 @@
                 if (this.readyState == 4 && this.status == 200) {
                     // response has been made - interpret the JSON:
                     var jsonObj = JSON.parse(this.responseText);
-                    document.getElementById('weather').innerHTML = jsonObj["weather"][0]["description"]
-                    var temp = Math.round(jsonObj['main']["temp"] - 273.15)
-                    document.getElementById('temperature').innerHTML = temp.toString().concat('\xB0')
-                    temp = Math.round(jsonObj['main']["feels_like"] - 273.15)
-                    var prefix = 'Feels like '
-                    document.getElementById('realfeel').innerHTML = prefix.concat(temp.toString(),'\xB0')
                 }
             };
             xhttp.open("GET", "http://api.openweathermap.org/data/2.5/forecast?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
@@ -101,6 +97,7 @@
     </div>
     <div class="row">
         <div class="column1">
+            <img id="weathericon" width="80" height="80">
             <div id="temperature" class="large"></div>
         </div>
     </div>
