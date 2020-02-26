@@ -16,12 +16,19 @@
             clear: both;
             margin-bottom: 50px;
         }
-        .column {float: left; }
-        .column.side {width:33%}
-        .date {color:lightgrey; font-size: 35px;float:left;}
-        .large {color: white; text-align:center; text-decoration: none; font-size: 60px; float:left; }
-        .small {float: left; font-size: 30px; color:lightgrey}
+        .column.left {float: left; width:50%; text-align: left;}
+        .column.right {float: right;width:50%; text-align: right;}
+        .date {color:lightgrey; font-size: 35px;}
+        .large {color: white; text-decoration: none; font-size: 60px; }
+        .small {font-size: 30px; color:lightgrey}
+        .verysmall {font-size: 20px; color:lightgrey}
+        .floatleft {float: left;}
+        .floatright {float:right;}
+        .space {margin-right: 10px;}
+        hr { width: 40%; }
     </style>
+    <!-- icons: -->
+    <script src="https://kit.fontawesome.com/a8f721cb81.js" crossorigin="anonymous"></script>
     <script>
         function startup(){
             // Handler for the timer functions
@@ -36,6 +43,7 @@
             var h = today.getHours();
             var m = today.getMinutes();
             var s = today.getSeconds();
+            h = checkTime(h);
             m = checkTime(m);
             s = checkTime(s);
             document.getElementById('timemain').innerHTML = h + ":" + m;
@@ -62,6 +70,19 @@
                     document.getElementById('realfeel').innerHTML = prefix.concat(temp.toString(),'\xB0')
                     //Update the weather icon:
                     document.getElementById("weathericon").src = "https://openweathermap.org/img/wn/".concat(jsonObj["weather"][0]["icon"], '@2x.png')
+                    //Sunrise and Sunset
+                    var dateObj = new Date(jsonObj["sys"]["sunrise"] * 1000)
+                    var h = dateObj.getHours();
+                    var m = dateObj.getMinutes();
+                    h = checkTime(h);
+                    m = checkTime(m);
+                    document.getElementById('sunrise').innerHTML = h + ":" + m;
+                    var dateObj = new Date(jsonObj["sys"]["sunset"] * 1000)
+                    var h = dateObj.getHours();
+                    var m = dateObj.getMinutes();
+                    h = checkTime(h);
+                    m = checkTime(m);
+                    document.getElementById('sunset').innerHTML = h + ":" + m;
                 }
             };
             xhttp.open("GET", "https://api.openweathermap.org/data/2.5/weather?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
@@ -84,31 +105,37 @@
     </script>
 </head>
 <body onload="startup()">
-    <div class="row">
-        <div class="column1">
-            <div id="date" class="date"></div>
+    <div class="column left">
+        <div class="row">
+            <i class="fas fa-sun floatleft"></i>
+            <div id="sunrise" class="verysmall floatleft space"></div>
+            <i class="fas fa-moon floatleft"></i>
+            <div id="sunset" class="verysmall floatleft"></div>
         </div>
-    </div>
-    <div class="rowbreak">
-        <div class="column1">
-            <div id="timemain" class="large"></div>
-            <div id="timeseconds" class="small"></div>
+        <div class="row">
+            <img id="weathericon" class="floatleft" width="80" height="80">
+            <div id="temperature" class="large floatleft"></div>
         </div>
-    </div>
-    <div class="row">
-        <div class="column1">
-            <img id="weathericon" width="80" height="80">
-            <div id="temperature" class="large"></div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column1">
+        <div class="row">
             <div id="realfeel" class="small"></div>
         </div>
-    </div>
-    <div class="rowbreak">
-        <div class="column1">
+        <div class="rowbreak">
             <div id="weather" class="small"></div>
+        </div>
+        <div class="row">
+            <div class="verysmall">Weather Forecast</div>
+        </div>
+        <div class="row">
+            <hr class="floatleft">
+        </div>
+    </div>
+    <div class="column right">
+        <div class="row">
+            <div id="date" class="date"></div>
+        </div>
+        <div class="rowbreak">
+            <div id="timeseconds" class="small floatright"></div>
+            <div id="timemain" class="large"></div>
         </div>
     </div>
 </body>
