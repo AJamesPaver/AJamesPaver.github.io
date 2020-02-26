@@ -96,6 +96,31 @@
                 if (this.readyState == 4 && this.status == 200) {
                     // response has been made - interpret the JSON:
                     var jsonObj = JSON.parse(this.responseText);
+                    var days    = ['Sun','Mon','Tue','Wed','Thur','Fri','Sat'];
+                    // get the time at midnight today:
+                    var now = new Date();
+                    var today = new Date(now.getYear() + 1900, now.getMonth(), now.getDate());
+                    // set the timeOffset to 36 hours from today:
+                    var timeOffset = 36 * 60 * 60 * 1000;
+                    // we allow 1 hour either way:
+                    var timeThresh = 60 * 60 * 1000;
+                    var iDay = 0
+                    var temp = 0
+                    for (var i = 0; i < jsonObj["list"].length; i++){
+                        var time = new Date( jsonObj["list"][i]["dt"] * 1000 )
+                        if ( (time.getTime() > today.getTime()+timeOffset - timeThresh) && (time.getTime() < today.getTime()+timeOffset + timeThresh) ){
+                            //New time - plot it:
+                            document.getElementById('forecastday'.concat(iDay)).innerHTML  = days[ time.getDay() ]
+                            temp = Math.round(jsonObj["list"][i]["main"]["temp"] - 273.15)
+                            document.getElementById('forecasttemp'.concat(iDay)).innerHTML = temp.toString().concat('\xB0')
+                            document.getElementById("forecasticon".concat(iDay)).src = "https://openweathermap.org/img/wn/".concat(jsonObj["list"][i]["weather"][0]["icon"], '@2x.png')
+                            iDay = iDay + 1;
+                            if (iDay == 5){
+                                break;
+                            }
+                            timeOffset = timeOffset + 24 * 60 * 60 * 1000; // next day
+                        }
+                    }
                 }
             };
             xhttp.open("GET", "https://api.openweathermap.org/data/2.5/forecast?id=2647793&appid=b91ea3be51203e1d8fb7da23377a37f2", true);
@@ -107,14 +132,23 @@
 <body onload="startup()">
     <div class="column left">
         <div class="row">
-            <i class="fas fa-sun floatleft"></i>
-            <div id="sunrise" class="verysmall floatleft space"></div>
-            <i class="fas fa-moon floatleft"></i>
-            <div id="sunset" class="verysmall floatleft"></div>
+            <div id="date" class="date"></div>
+        </div>
+        <div class="rowbreak">
+            <div id="timemain" class="large floatleft"></div>
+            <div id="timeseconds" class="small"></div>
+        </div>
+    </div>
+    <div class="column right">
+        <div class="row">
+            <div id="sunset" class="verysmall floatright"></div>
+            <i class="fas fa-moon floatright"></i>
+            <div id="sunrise" class="verysmall floatright space"></div>
+            <i class="fas fa-sun floatright"></i>
         </div>
         <div class="row">
-            <img id="weathericon" class="floatleft" width="80" height="80">
-            <div id="temperature" class="large floatleft"></div>
+            <div id="temperature" class="large floatright"></div>
+            <img id="weathericon" class="floatright" width="80" height="80">
         </div>
         <div class="row">
             <div id="realfeel" class="small"></div>
@@ -126,16 +160,36 @@
             <div class="verysmall">Weather Forecast</div>
         </div>
         <div class="row">
-            <hr class="floatleft">
+            <hr class="floatright">
         </div>
-    </div>
-    <div class="column right">
         <div class="row">
-            <div id="date" class="date"></div>
-        </div>
-        <div class="rowbreak">
-            <div id="timeseconds" class="small floatright"></div>
-            <div id="timemain" class="large"></div>
+            <table style="width:40%;float: right;">
+                <tr>
+                    <td id="forecastday0" style="opacity: 1;"></td>
+                    <td style="opacity: 1;"><img id="forecasticon0" width="40" height="40"></td>
+                    <td id="forecasttemp0" style="opacity: 1;"></td>
+                </tr>
+                <tr>
+                    <td id="forecastday1" style="opacity: 1;"></td>
+                    <td style="opacity: 1;"><img id="forecasticon1" width="40" height="40"></td>
+                    <td id="forecasttemp1" style="opacity: 1;"></td>
+                </tr>
+                <tr>
+                    <td id="forecastday2" style="opacity: 0.8;"></td>
+                    <td style="opacity: 0.8;"><img id="forecasticon2" width="40" height="40"></td>
+                    <td id="forecasttemp2" style="opacity: 0.8;"></td>
+                </tr>
+                <tr>
+                    <td id="forecastday3" style="opacity: 0.6;"></td>
+                    <td style="opacity: 0.6;"><img id="forecasticon3" width="40" height="40"></td>
+                    <td id="forecasttemp3" style="opacity: 0.6;"></td>
+                </tr>
+                <tr>
+                    <td id="forecastday4" style="opacity: 0.4;"></td>
+                    <td style="opacity: 0.4;"><img id="forecasticon4" width="40" height="40"></td>
+                    <td id="forecasttemp4" style="opacity: 0.4;"></td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
