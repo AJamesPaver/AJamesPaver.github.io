@@ -25,16 +25,22 @@
         .floatleft {float: left;}
         .floatright {float:right;}
         .space {margin-right: 10px;}
+        .border {border-style: solid;}
         hr { width: 40%; }
     </style>
     <!-- icons: -->
     <script src="https://kit.fontawesome.com/a8f721cb81.js" crossorigin="anonymous"></script>
+    <!-- google: -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- my code: -->
     <script>
         function startup(){
             // Handler for the timer functions
             startTime();
             updateWeather();
             updateForecast();
+            updateCalendar();
+            // TODO: google API
         }
         function startTime() {
             var days    = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -54,6 +60,50 @@
         function checkTime(i) {
           if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
           return i;
+        }
+        function updateCalendar() {
+            // Update calendar
+            var today = new Date();
+            // Get the day of the week:
+            var day = today.getDay() - 1;
+            if (day < 0){
+                day = 6; //Sunday wrap around
+            }
+            // Highlight todays date:
+            document.getElementById('calendar0'.concat(day)).innerHTML = today.getDate();
+            document.getElementById('calendar0'.concat(day)).setAttribute("class","border");
+            // work backwards to the start of the week:
+            var time  = new Date();
+            for (var i = day-1; i > -1; i--){
+                time.setDate( time.getDate()-1 );
+                var thisday =  time.getDay() - 1;
+                if (thisday < 0){
+                    thisday = 6; //Sunday wrap around
+                }
+                document.getElementById('calendar0'.concat(thisday)).innerHTML = time.getDate();
+            }
+            // work forwards to the end of the month:
+            var time  = new Date();
+            for (var j = day+1; j < 7; j++){
+                time.setDate( time.getDate()+1 );
+                thisday =  time.getDay() - 1;
+                if (thisday < 0){
+                    thisday = 6; //Sunday wrap around
+                }
+                document.getElementById('calendar0'.concat(thisday)).innerHTML = time.getDate();
+            }
+            // work forwards through the rest of the month:
+            for (var i = 1; i < 4; i++){
+                for (var j = 0; j < 7; j++){
+                    time.setDate( time.getDate()+1 );
+                    thisday =  time.getDay() - 1;
+                    if (thisday < 0){
+                        thisday = 6; //Sunday wrap around
+                    }
+                    document.getElementById('calendar'.concat(i,thisday)).innerHTML = time.getDate();
+                }
+            }
+            var t1 = setTimeout(updateCalendar, 1000*60*60); // run this again in 60min
         }
         function updateWeather() {
             // Update the weather
@@ -137,6 +187,61 @@
         <div class="rowbreak">
             <div id="timemain" class="large floatleft"></div>
             <div id="timeseconds" class="small"></div>
+        </div>
+        <div class="row">
+            <div class="verysmall">Calendar</div>
+        </div>
+        <div class="row">
+            <hr class="floatleft">
+        </div>
+        <div class="row">
+            <table style="width:40%;float: left;">
+                <tr>
+                    <th >M</th>
+                    <th >T</th>
+                    <th >W</th>
+                    <th >T</th>
+                    <th >F</th>
+                    <th >S</th>
+                    <th >S</th>
+                </tr>
+                <tr>
+                    <td id="calendar00"></td>
+                    <td id="calendar01"></td>
+                    <td id="calendar02"></td>
+                    <td id="calendar03"></td>
+                    <td id="calendar04"></td>
+                    <td id="calendar05"></td>
+                    <td id="calendar06"></td>
+                </tr>
+                <tr>
+                    <td id="calendar10"></td>
+                    <td id="calendar11"></td>
+                    <td id="calendar12"></td>
+                    <td id="calendar13"></td>
+                    <td id="calendar14"></td>
+                    <td id="calendar15"></td>
+                    <td id="calendar16"></td>
+                </tr>
+                <tr>
+                    <td id="calendar20"></td>
+                    <td id="calendar21"></td>
+                    <td id="calendar22"></td>
+                    <td id="calendar23"></td>
+                    <td id="calendar24"></td>
+                    <td id="calendar25"></td>
+                    <td id="calendar26"></td>
+                </tr>
+                <tr>
+                    <td id="calendar30"></td>
+                    <td id="calendar31"></td>
+                    <td id="calendar32"></td>
+                    <td id="calendar33"></td>
+                    <td id="calendar34"></td>
+                    <td id="calendar35"></td>
+                    <td id="calendar36"></td>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="column right">
